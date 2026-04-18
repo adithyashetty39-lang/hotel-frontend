@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Living Canvas | Bookings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#3b463e",
+                    "surface-dim": "#d4dbda",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#131e17",
+                    "tertiary-fixed": "#d9e6da",
+                    "primary-fixed-dim": "#91d78a",
+                    "surface-container-highest": "#dde4e2",
+                    "outline": "#707975",
+                    "on-surface-variant": "#3f4945",
+                    "surface-variant": "#dde4e2",
+                    "inverse-on-surface": "#ebf2f0",
+                    "surface-bright": "#f4fbf9",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#00201b",
+                    "primary-container": "#064f13",
+                    "on-secondary-fixed-variant": "#005045",
+                    "secondary": "#006b5c",
+                    "secondary-container": "#9bf3df",
+                    "outline-variant": "#bfc9c4",
+                    "on-primary-fixed": "#002203",
+                    "tertiary-fixed-dim": "#bdcabe",
+                    "background": "#f4fbf9",
+                    "secondary-fixed-dim": "#7fd6c3",
+                    "inverse-primary": "#91d78a",
+                    "surface-container": "#e8efed",
+                    "on-surface": "#161d1c",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#7cc176",
+                    "surface-tint": "#2a6b2c",
+                    "surface-container-low": "#eef5f3",
+                    "inverse-surface": "#2b3231",
+                    "surface": "#f4fbf9",
+                    "primary": "#003608",
+                    "on-secondary-container": "#017162",
+                    "tertiary": "#253028",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#a7b4a9",
+                    "on-tertiary-fixed-variant": "#3e4a41",
+                    "surface-container-high": "#e3eae8",
+                    "primary-fixed": "#acf4a4",
+                    "on-primary-fixed-variant": "#0c5216",
+                    "on-background": "#161d1c",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#9bf3df"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: url('https://images.unsplash.com/photo-1518173946687-a4c8a98039f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2560&q=80') center/cover no-repeat fixed;
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(244, 251, 249, 0.6);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="antialiased text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-8 py-4 bg-white/50 dark:bg-emerald-950/50 backdrop-blur-xl rounded-b-[24px] mt-4 mx-4 shadow-[0_32px_64px_-15px_rgba(0,54,8,0.1)]">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold text-emerald-900 dark:text-emerald-50 font-manrope tracking-tight">The Organic Concierge</span>
+<nav class="hidden md:flex items-center gap-6 font-manrope tracking-tight font-semibold">
+<a class="text-emerald-800/60 dark:text-emerald-200/60 hover:text-emerald-700 transition-colors" href="#">Dashboard</a>
+<a class="text-emerald-900 dark:text-emerald-50 border-b-2 border-emerald-600 pb-1" href="#">Bookings</a>
+<a class="text-emerald-800/60 dark:text-emerald-200/60 hover:text-emerald-700 transition-colors" href="#">Inventory</a>
+<a class="text-emerald-800/60 dark:text-emerald-200/60 hover:text-emerald-700 transition-colors" href="#">Guests</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined text-emerald-900" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined text-emerald-900" data-icon="settings">settings</span>
+</button>
+<img alt="Manager Profile" class="w-10 h-10 rounded-full border-2 border-white/20" data-alt="Portrait of a professional hotel manager in a clean white environment with natural sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEcUnGNR--TUVZNDOS2qF2udgDnKNftTRA9cZaTnXjB_RvSBgtVuofS8eSP7PZZcfkfa3IDBPm2IfL6FPDk8jgX88K31tmAwnZwQApdOIpfcHX4SV-cAxCtaD4dhRYfXR344SxjCsp0vj-xwg9pc93q9YrNZMFxJ3WrZDbt51YSxD3x9L0WfzHTXCLon5fEZfRqnjhWZXRe0PwFHnV9EwyCeRdHjRFAd-tX7kWtKopvvI5iuqRaoTc54InMTpfCvSCt3xV3dWOyNU"/>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 bottom-0 z-40 flex flex-col p-6 hidden lg:flex">
+<div class="bg-emerald-50/60 dark:bg-emerald-900/60 backdrop-blur-2xl rounded-[32px] h-[calc(100vh-32px)] w-72 flex flex-col shadow-2xl m-4 pt-24 pb-8 px-6">
+<div class="mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="spa" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-emerald-950 dark:text-white font-headline">The Living Canvas</h2>
+<p class="text-xs text-emerald-800/60 font-medium">Premium Suites</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2 font-manrope text-sm font-medium">
+<a class="flex items-center gap-3 text-emerald-800/70 dark:text-emerald-200/70 px-4 py-3 hover:bg-white/40 rounded-2xl transition-all hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-3 bg-emerald-100/80 dark:bg-emerald-800/80 text-emerald-900 dark:text-emerald-50 rounded-2xl px-4 py-3 relative after:content-[''] after:absolute after:left-0 after:w-1 after:h-6 after:bg-emerald-500 after:rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span>Reservations</span>
+</a>
+<a class="flex items-center gap-3 text-emerald-800/70 dark:text-emerald-200/70 px-4 py-3 hover:bg-white/40 rounded-2xl transition-all hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="room_service">room_service</span>
+<span>Concierge</span>
+</a>
+<a class="flex items-center gap-3 text-emerald-800/70 dark:text-emerald-200/70 px-4 py-3 hover:bg-white/40 rounded-2xl transition-all hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="cleaning_services">cleaning_services</span>
+<span>Housekeeping</span>
+</a>
+<a class="flex items-center gap-3 text-emerald-800/70 dark:text-emerald-200/70 px-4 py-3 hover:bg-white/40 rounded-2xl transition-all hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+</nav>
+<button class="w-full py-4 bg-primary text-on-primary rounded-full font-bold shadow-lg shadow-primary/20 scale-100 active:scale-95 transition-all mb-8">
+                New Booking
+            </button>
+<div class="space-y-2 border-t border-emerald-900/10 pt-6">
+<a class="flex items-center gap-3 text-emerald-800/70 px-4 py-2 hover:bg-white/20 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 text-red-700 px-4 py-2 hover:bg-white/20 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="lg:ml-80 pt-32 px-8 pb-12">
+<div class="max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div>
+<span class="text-sm font-bold text-secondary tracking-widest uppercase mb-2 block">Management Portal</span>
+<h1 class="text-5xl font-extrabold text-primary font-headline tracking-tighter">Guest Bookings</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex -space-x-3">
+<img alt="Active Guest" class="w-10 h-10 rounded-full border-2 border-surface shadow-sm" data-alt="Portrait of a smiling young man in a linen shirt outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFygbfq_9wyqx-LbPHrwKSDbQ6syOUT0pwnlRqRcn1yTGCJ220rnAZYSm1by2dFPlmdUl5QDGRTnO59K3ATiQHfPy1IkenHP36GtmW3LjyDJB_Tv7GA_BUmVFYBQadX38SmPFekAL-tkHKB7K9v-ELhlsYZIoKz0wSSl7RltHC_QjGNDoLJ1UzfXrsn3pox0izylRiOz1-sNNFRVyjGuoy1pZl3VPb1ByHzMWjF6awVzzh2FnhWDlfdrq3g_f0g1rk-AoM7mIksNA"/>
+<img alt="Active Guest" class="w-10 h-10 rounded-full border-2 border-surface shadow-sm" data-alt="Portrait of a cheerful woman with curly hair in a sunlit garden" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi8e3I_GCr6jv3PLMMy4QU_sFFjQ186zDy0lwkzDSPAYCfYVdvKMrJsLhf_58d-icfFlfmX5H-WFr5_r7FihcdSuP3-goSvdV62BzsYUUOZQQnWZ3X0uFna7Jl-BG3dEgX5U6_nMju6krLbMKPom65RJCAqLe5hO8IuwvyebxxRFygWQsVSHNOKAbYOE3tfXx_vTHgzhv9MMDBAgG2W_j61_dmKeAG5yIWWgZxRbtto7gCYqJojyzsUD-1OYU1KFedLznqS-cMaXA"/>
+<img alt="Active Guest" class="w-10 h-10 rounded-full border-2 border-surface shadow-sm" data-alt="Close up of a man with a beard looking thoughtfully at the camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIOdn6bUA5udBGXlRrJDFlvUeQ5BhANepmEFLhl3aW1BDzYrrBVs_KJIquHtEYjJIL3NX8YrTdnztQ-rvjxCVCrqmEl-UbTA5vnn9NGwFUKHcZn1YVMjJcnZHGyKnxjV7EHmACKOfW62CWOZEN3gJQg3Z0yCoX71PfoBfWwyOouqBsu7QH9IZbwqqCT5Ai6tXgVTa65v8rPOEibqixJJFTnWirLKgBmFlBGqRsNB8J9gi8k-s0gCT1TaNQqsJXyOP6xBYY2UHGBWs"/>
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center text-xs font-bold border-2 border-surface">
+                            +12
+                        </div>
+</div>
+<p class="text-sm font-medium text-on-surface-variant">Active reservations today</p>
+</div>
+</div>
+<!-- Filter Bar Widget -->
+<div class="glass-panel p-6 rounded-lg mb-12 flex flex-wrap items-center gap-6 shadow-xl border-none">
+<div class="flex-1 min-w-[240px] relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full bg-surface-container-highest border-none rounded-full py-3 pl-12 pr-6 text-sm focus:ring-2 focus:ring-secondary/20 placeholder:text-outline" placeholder="Search guests or room names..." type="text"/>
+</div>
+<div class="h-10 w-[1px] bg-outline-variant opacity-30 hidden md:block"></div>
+<div class="flex items-center gap-3">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-outline-variant px-1">Date Range</span>
+<button class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-xl text-sm font-semibold text-primary">
+<span>Oct 12 — Oct 18</span>
+<span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-outline-variant px-1">Room Type</span>
+<button class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-xl text-sm font-semibold text-primary">
+<span>All Suites</span>
+<span class="material-symbols-outlined text-sm" data-icon="tune">tune</span>
+</button>
+</div>
+</div>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-8 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg" data-icon="add_circle">add_circle</span>
+                    New Booking
+                </button>
+</div>
+<!-- Bookings Directory (Asymmetrical Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Booking Card 1 -->
+<div class="glass-panel p-8 rounded-lg shadow-xl flex flex-col gap-6 group hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<img alt="Elena Vance" class="w-14 h-14 rounded-2xl object-cover" data-alt="Close-up portrait of a woman with freckles and calm expression in soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHTnrO3cPrHA7sszDiLSK6sCqTb58nu0NRzcpFMQOV2-AfOPSkskdFVfqws8_7ghN8Mh135qVtFiX7AE8roTEbs1Hk1mkqUqStem7KakeS5pb63HazIWLsxofvkVufzVxxIONz6aYufcKOD4lW-eJycqUVmLUGAyzjwsFHwNkEsOE1u2cRAxjTOAdxty8RsHI_uUxsSMGsdwWrta4ZRg4TCfbB9pbdzoKqjbEwBGoPYgQasJsdXrECyr-Z2LxuJ5t7C_3mGI_WBGw"/>
+<div>
+<h3 class="font-bold text-xl text-primary font-headline">Elena Vance</h3>
+<p class="text-sm text-on-surface-variant font-medium">Guest ID: #3920</p>
+</div>
+</div>
+<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">Confirmed</span>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-5 relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-[10px] uppercase font-bold text-outline mb-1">Room Selection</p>
+<h4 class="text-2xl font-black text-primary mb-4">The Mist <span class="text-secondary opacity-40">/ Penthouse</span></h4>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="calendar_today">calendar_today</span>
+<span class="text-xs font-bold text-primary">Oct 14 - 21</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="group">group</span>
+<span class="text-xs font-bold text-primary">2 Guests</span>
+</div>
+</div>
+</div>
+<!-- Background Texture -->
+<div class="absolute right-0 bottom-0 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="filter_drama" style="font-variation-settings: 'FILL' 1;">filter_drama</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div>
+<p class="text-[10px] uppercase font-bold text-outline">Total Amount</p>
+<p class="text-2xl font-extrabold text-primary">$4,850.00</p>
+</div>
+<button class="w-12 h-12 rounded-full border border-secondary/20 flex items-center justify-center text-secondary hover:bg-secondary hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Booking Card 2 -->
+<div class="glass-panel p-8 rounded-lg shadow-xl flex flex-col gap-6 group hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<img alt="Marcus Chen" class="w-14 h-14 rounded-2xl object-cover" data-alt="Portrait of a professional man in a dark polo shirt with a garden background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7dIr-YG1zy3ZfxLIgh8on2uHkMVnEUVNMYJ-8-4aCHGEJMfnpAEzg_v0afdAVINWoVphdg0R7jMUzVCtNyBwIb7kAK2XzLHCYM8paE4fGDIN1O-Ypd5cc_ZL1TqmF9tOBZgQsc5iX-8AVchxmaZxVlIoLyuFXbn_5kSUl5zj0ctrNWKXth6AbzmF8tPLBCJa3j430g9wX7_oo_j2OE7GmHMuqGXgpcGeP3jJy9OFAcq5Fyudl0q-wVet9teaz9iAY2xM0WQte9dk"/>
+<div>
+<h3 class="font-bold text-xl text-primary font-headline">Marcus Chen</h3>
+<p class="text-sm text-on-surface-variant font-medium">Guest ID: #4012</p>
+</div>
+</div>
+<span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">Pending</span>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-5 relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-[10px] uppercase font-bold text-outline mb-1">Room Selection</p>
+<h4 class="text-2xl font-black text-primary mb-4">Veranda Luxe <span class="text-secondary opacity-40">/ Garden</span></h4>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="calendar_today">calendar_today</span>
+<span class="text-xs font-bold text-primary">Oct 16 - 19</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="group">group</span>
+<span class="text-xs font-bold text-primary">1 Guest</span>
+</div>
+</div>
+</div>
+<div class="absolute right-0 bottom-0 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="potted_plant" style="font-variation-settings: 'FILL' 1;">potted_plant</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div>
+<p class="text-[10px] uppercase font-bold text-outline">Total Amount</p>
+<p class="text-2xl font-extrabold text-primary">$2,100.00</p>
+</div>
+<button class="w-12 h-12 rounded-full border border-secondary/20 flex items-center justify-center text-secondary hover:bg-secondary hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Booking Card 3 (Featured/Wider concept or unique shape) -->
+<div class="glass-panel p-8 rounded-lg shadow-xl flex flex-col gap-6 group border-2 border-secondary/20 bg-secondary/5">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl" data-icon="diamond" style="font-variation-settings: 'FILL' 1;">diamond</span>
+</div>
+<div>
+<h3 class="font-bold text-xl text-primary font-headline">The Canvas Suite</h3>
+<p class="text-sm text-secondary font-bold">Featured Listing</p>
+</div>
+</div>
+<button class="text-secondary">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="relative h-40 rounded-2xl overflow-hidden group">
+<img alt="Premium Suite" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A luxurious hotel suite with floor-to-ceiling windows looking out over a lush green forest at dawn" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVt33ZhMtq3DQRKHXa9nRflzH9mnE9SaKnb-lwZBKVmksJIBrYuKvhH_lCH0CK8OOK0w4nBaF2TT__g-YcXEbeay5PcnVuhpWqcNTX5MeDUQGZZmNIV8RALGBo8P524gElaiDxIvtE9W_vvQ0UJJ57Yu8ZyxzO8PJeQAVqOS-n7btb5oCJQrAB8JUtk976arfTJgaMMvCDNpUxJmVNYwT5PNi7vBjAwkCbhhKbVcoxdDoAS-WzmjdhUKeMIm-KfpHrByUI6gI57K8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-4">
+<p class="text-white font-bold">High Occupancy Expected</p>
+<div class="w-full h-1 bg-white/20 rounded-full mt-2">
+<div class="w-[85%] h-full bg-secondary rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-black uppercase">Trending</div>
+<div class="px-3 py-1 bg-surface-container-highest text-primary rounded-full text-[10px] font-black uppercase">Top Rated</div>
+</div>
+<button class="w-full py-3 bg-white/50 hover:bg-white text-primary rounded-xl text-sm font-bold transition-all">
+                        View Availability Map
+                    </button>
+</div>
+<!-- Booking Card 4 -->
+<div class="glass-panel p-8 rounded-lg shadow-xl flex flex-col gap-6 group hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<img alt="Sarah Jenkins" class="w-14 h-14 rounded-2xl object-cover" data-alt="Professional woman with a warm smile wearing glasses in a modern office interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzWKnGlr5tVPrp_5qzkG_ybXKlEQFsDC4kwjWCOKKmLL5gcdpCa_kWVm1itvkKafeDxLrmEZ7SqY59_oKEZrNP_BhIrOZgt5pY32I7y5wjIzVH21WYd7QPbqaqFG7-sHIX9gHjB_q4TJvNJYnRCXIpD_NUKBg7Blje2GXUK7RyijQDyYJco7l7nIG0V-Omu9BZO-5i3O-BvN1CpTVRnxPZU3woi85illJr1AbPZJ2lEZpyrfHZaFs1dGnXbpclc9JxRFWaeqgXLTQ"/>
+<div>
+<h3 class="font-bold text-xl text-primary font-headline">Sarah Jenkins</h3>
+<p class="text-sm text-on-surface-variant font-medium">Guest ID: #4055</p>
+</div>
+</div>
+<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">Confirmed</span>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-5 relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-[10px] uppercase font-bold text-outline mb-1">Room Selection</p>
+<h4 class="text-2xl font-black text-primary mb-4">Forest Echo <span class="text-secondary opacity-40">/ Eco Cabin</span></h4>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="calendar_today">calendar_today</span>
+<span class="text-xs font-bold text-primary">Oct 20 - 25</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="group">group</span>
+<span class="text-xs font-bold text-primary">2 Guests</span>
+</div>
+</div>
+</div>
+<div class="absolute right-0 bottom-0 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="eco" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div>
+<p class="text-[10px] uppercase font-bold text-outline">Total Amount</p>
+<p class="text-2xl font-extrabold text-primary">$3,250.00</p>
+</div>
+<button class="w-12 h-12 rounded-full border border-secondary/20 flex items-center justify-center text-secondary hover:bg-secondary hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Floating FAB (Contextual for New Booking) -->
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center group scale-100 active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform duration-300" data-icon="add">add</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 glass-panel px-6 py-4 flex justify-around items-center rounded-t-[24px] z-50">
+<a class="flex flex-col items-center gap-1 text-emerald-800/60" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-bold">HOME</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="text-[10px] font-bold">BOOKINGS</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-emerald-800/60" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] font-bold">PROFILE</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Organic Concierge | Premium Hotel Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#f4fbf9",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#005045",
+                    "on-primary-fixed": "#002203",
+                    "surface-container-highest": "#dde4e2",
+                    "on-primary-fixed-variant": "#0c5216",
+                    "background": "#f4fbf9",
+                    "tertiary-container": "#3b463e",
+                    "primary-fixed-dim": "#91d78a",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#9bf3df",
+                    "on-surface": "#161d1c",
+                    "primary": "#003608",
+                    "on-primary-container": "#7cc176",
+                    "on-tertiary-container": "#a7b4a9",
+                    "primary-fixed": "#acf4a4",
+                    "outline": "#707975",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#253028",
+                    "on-tertiary-fixed-variant": "#3e4a41",
+                    "tertiary-fixed-dim": "#bdcabe",
+                    "inverse-primary": "#91d78a",
+                    "inverse-on-surface": "#ebf2f0",
+                    "secondary-container": "#9bf3df",
+                    "secondary": "#006b5c",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#2b3231",
+                    "secondary-fixed-dim": "#7fd6c3",
+                    "tertiary-fixed": "#d9e6da",
+                    "surface-dim": "#d4dbda",
+                    "on-secondary-fixed": "#00201b",
+                    "surface-tint": "#2a6b2c",
+                    "surface-container-high": "#e3eae8",
+                    "primary-container": "#064f13",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#017162",
+                    "surface-variant": "#dde4e2",
+                    "outline-variant": "#bfc9c4",
+                    "on-primary": "#ffffff",
+                    "surface": "#f4fbf9",
+                    "on-tertiary-fixed": "#131e17",
+                    "surface-container": "#e8efed",
+                    "surface-container-low": "#eef5f3",
+                    "on-background": "#161d1c",
+                    "on-surface-variant": "#3f4945"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>body {
+    font-family: "Plus Jakarta Sans", sans-serif
+    }
+.font-headline {
+    font-family: "Manrope", sans-serif
+    }
+.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.bg-landscape {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAft0jeWDdbuGctbNNLIkPu8CHcDl4SszDa6IrxKnK_JIQkMbhW_M_KP9umaxm97OOYF3ZE44WyDMIDdpIQGdT9sghlp-CUJAz6d664KW8I6qWVyVbKgGhsXlbdRTyh_lGPlVez4hUfKw-pd7djbzlxBSiXjAXnaRFoohezcI9BeXmvK9_bl0mEt8XAx4MsTQoAvjAI1iB63iGiaxUpFiaN35di2t4cU7fyvmU3LTobt0kDIJKau15boCApyYdjn0i5FZF1uGnxmDs);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed
+    }</style>
+</head>
+<body class="bg-landscape min-h-screen selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopNavBar (Fixed) -->
+<header class="fixed top-0 left-0 lg:left-[340px] right-0 z-40 flex justify-between items-center px-8 h-20 max-w-[1060px] mx-auto bg-white/60 backdrop-blur-3xl rounded-full mt-4 mx-8 shadow-[0_32px_64px_-15px_rgba(0,54,8,0.1)]">
+<div class="flex items-center gap-8 flex-1">
+<div class="text-xl font-bold tracking-tight text-emerald-900 font-headline">
+                Organic Concierge
+            </div>
+<div class="relative w-full max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60">search</span>
+<input class="w-full bg-white/40 border-none rounded-full py-2.5 pl-12 pr-4 focus:ring-2 focus:ring-secondary/20 placeholder:text-on-surface-variant/40 text-body-md transition-all" placeholder="Search guests, rooms, or events..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-3 rounded-full hover:bg-emerald-50/50 transition-all active:scale-90 text-emerald-900">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-1 rounded-full hover:bg-emerald-50/50 transition-all active:scale-90 text-emerald-900 border border-white/40 bg-white/20">
+<img alt="User Profile" class="w-10 h-10 rounded-full" data-alt="close-up portrait of a professional hotel manager with a friendly expression in a sunlit modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqUyNZ1kLeuYvBaWBEQ9H9n4Z5FaclcRsly0YOeYa_j07PxIgel240-vKvYDmDd4H7EtENFCp6RTmlIdvwLUBgmTtM_6Mg74XVnhpMHvtSSI97rg9hFRvHOILmpA2-PBoZV0zj7f53-QOwu8DzQZYNy6tifAEd7KijT0O11BZaT8xWk78uCtoPY4DfHyQaLDWUIz4XTyiTe9cLB7IvrPTfXTfNBDUmiUflotIjrmU88k6YIGGxnRMMHb1ClVbTCO40tdExVAMar1o"/>
+</button>
+</div>
+</header>
+<!-- SideNavBar (Fixed Left) -->
+<nav class="fixed left-0 top-0 bottom-0 z-50 flex flex-col p-8 w-72 bg-white/70 backdrop-blur-2xl my-6 ml-6 rounded-[24px] shadow-[0_8px_32px_0_rgba(0,54,8,0.05)] hidden lg:flex">
+<div class="mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-emerald-900 font-headline leading-tight">The Living Canvas</h2>
+<p class="text-xs font-semibold text-emerald-900/60 uppercase tracking-widest">Premium Suites</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 flex-1">
+<!-- Active Navigation -->
+<a class="flex items-center gap-4 py-3 px-4 rounded-2xl text-emerald-900 relative before:content-[''] before:absolute before:-left-4 before:w-1 before:h-6 before:bg-secondary before:rounded-full font-semibold transition-all translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body">Overview</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-2xl text-emerald-900/40 hover:text-emerald-700 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body">Guests</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-2xl text-emerald-900/40 hover:text-emerald-700 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-body">Inventory</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-2xl text-emerald-900/40 hover:text-emerald-700 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-body">Analytics</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-2xl text-emerald-900/40 hover:text-emerald-700 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body">Settings</span>
+</a>
+</div>
+<button class="mt-auto bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+            New Booking
+        </button>
+</nav>
+<!-- Main Content Area -->
+<main class="lg:ml-[340px] pt-32 px-8 pb-12 max-w-[1440px] mx-auto">
+<!-- Metrics Row: Asymmetrical Overlapping Layout -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="relative group">
+<div class="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
+<div class="relative bg-white/60 backdrop-blur-3xl p-8 rounded-lg border border-white/40 shadow-xl">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant/60 font-semibold text-sm uppercase tracking-wider">Occupancy Rate</span>
+<div class="p-2 bg-secondary/10 text-secondary rounded-full">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<div class="text-5xl font-extrabold text-primary font-headline mb-1">85%</div>
+<div class="flex items-center gap-2 text-secondary font-semibold text-sm">
+<span>+4.2%</span>
+<span class="text-on-surface-variant/40">vs last month</span>
+</div>
+</div>
+</div>
+<div class="relative group md:translate-y-4">
+<div class="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
+<div class="relative bg-white/80 backdrop-blur-3xl p-8 rounded-lg border border-white/60 shadow-2xl">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant/60 font-semibold text-sm uppercase tracking-wider">Today's Arrivals</span>
+<div class="p-2 bg-primary/10 text-primary rounded-full">
+<span class="material-symbols-outlined" data-icon="luggage">luggage</span>
+</div>
+</div>
+<div class="text-5xl font-extrabold text-primary font-headline mb-1">12</div>
+<div class="flex items-center gap-2 text-on-surface-variant/40 font-semibold text-sm">
+<span>8 check-ins remaining</span>
+</div>
+</div>
+</div>
+<div class="relative group">
+<div class="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
+<div class="relative bg-white/60 backdrop-blur-3xl p-8 rounded-lg border border-white/40 shadow-xl">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant/60 font-semibold text-sm uppercase tracking-wider">Total Revenue</span>
+<div class="p-2 bg-emerald-900/10 text-emerald-900 rounded-full">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+</div>
+<div class="text-5xl font-extrabold text-primary font-headline mb-1">$14,280</div>
+<div class="flex items-center gap-2 text-emerald-700 font-semibold text-sm">
+<span>Peak performance</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Room Status Widget Section -->
+<section class="mt-16">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-3xl font-extrabold text-emerald-900 font-headline leading-tight">Live Directory</h3>
+<p class="text-emerald-900/60 font-medium">Real-time availability for the North Wing</p>
+</div>
+<div class="flex gap-2 bg-white/40 backdrop-blur-md p-1.5 rounded-full border border-white/40">
+<button class="px-6 py-2 rounded-full bg-white text-primary font-bold shadow-sm transition-all">All</button>
+<button class="px-6 py-2 rounded-full text-emerald-900/60 font-bold hover:bg-white/20 transition-all">Available</button>
+<button class="px-6 py-2 rounded-full text-emerald-900/60 font-bold hover:bg-white/20 transition-all">Occupied</button>
+</div>
+</div>
+<!-- Bento Grid of Room Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
+<!-- Room Card 1 -->
+<div class="group bg-white/40 backdrop-blur-3xl rounded-lg overflow-hidden border border-white/40 hover:bg-white/60 transition-all duration-500 shadow-lg hover:shadow-2xl">
+<div class="relative h-48 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="interior of a luxury minimalist hotel suite with floor-to-ceiling windows overlooking a green forest valley" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6aJeBpQfjr2nXfy57cP3a-szvNctjMI7hAt7nHmqNeaPcnOOW8sE-o_Sgy-feP7RFiKbHf5737RFjytRV9BddN5JDdosuR0PLAmdOpNEz3Uexg3ETAeEYz79_jpMFqs6silgGRq0AGnbCB-OsE325QB3wHqpH4rw-HOE2myNKsiA8DJRs1mz3FRj2--EwN0OI2E5EZmnG2cA4qnHoyGcamYGYFILt6-MQ1kFpSA9W095522L3RQ0tWRq3dw5WkpsTQV0wKf7TNlA"/>
+<div class="absolute top-4 right-4 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold shadow-sm">
+                            AVAILABLE
+                        </div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-lg font-bold text-emerald-900">Suite 104 — "The Mist"</h4>
+<span class="text-lg font-black text-secondary">$450</span>
+</div>
+<div class="flex items-center gap-3 text-emerald-900/40 text-sm mb-6">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">king_bed</span> King</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">ac_unit</span> AC</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">wifi</span> Free</span>
+</div>
+<button class="w-full py-3 rounded-2xl bg-white/60 border border-emerald-900/10 text-emerald-900 font-bold hover:bg-emerald-900 hover:text-white transition-all group-hover:border-emerald-900">
+                            Book Room
+                        </button>
+</div>
+</div>
+<!-- Room Card 2 -->
+<div class="group bg-white/40 backdrop-blur-3xl rounded-lg overflow-hidden border border-white/40 hover:bg-white/60 transition-all duration-500 shadow-lg hover:shadow-2xl xl:translate-y-8">
+<div class="relative h-48 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="modern master bedroom in a mountain lodge with warm organic wood textures and soft amber ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEuBhNgLOU4_KmuGZkLa3JsTQtHVuoeATRB4A0QdxZ5sKqbojsOgMO6rx-_4sycRlrb-xyMLNgy9hSx7iRkqJcDWfNTgw9wM--wMpW5OlU7LOVoFJaEAMyN664knA8qOec9sHYaxevaNIcPb_ULuCog8DReoEMgLxag7E877IT7n_v5Pn2UOQRIDv2piUnidd9QOBJe7yO69a2EofP-N1ZQGH0ei81lvdGHjj8Y9Tuk3oHfIS5DN9DUV4C75fiyYz0T17kWC9eSVc"/>
+<div class="absolute top-4 right-4 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold shadow-sm">
+                            AVAILABLE
+                        </div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-lg font-bold text-emerald-900">Room 302 — "Pine Hollow"</h4>
+<span class="text-lg font-black text-secondary">$320</span>
+</div>
+<div class="flex items-center gap-3 text-emerald-900/40 text-sm mb-6">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">king_bed</span> King</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">nature</span> Patio</span>
+</div>
+<button class="w-full py-3 rounded-2xl bg-white/60 border border-emerald-900/10 text-emerald-900 font-bold hover:bg-emerald-900 hover:text-white transition-all group-hover:border-emerald-900">
+                            Book Room
+                        </button>
+</div>
+</div>
+<!-- Room Card 3 -->
+<div class="group bg-white/40 backdrop-blur-3xl rounded-lg overflow-hidden border border-white/40 hover:bg-white/60 transition-all duration-500 shadow-lg hover:shadow-2xl">
+<div class="relative h-48 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="clean minimal white hotel bedroom with light oak furniture and soft morning sunlight filtering through linen curtains" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrdcdwk_b282Zcz2gMfbh1i6x04Q9PDZENllUJv9GcyeYgX36cwXFjM_c-50nQYbNY-QbNHKG4CdnJu8h2LiFkclb95q4aKRIOXrlsy8ugJNeMkykW0gu8qCtSiiSvtbHlRC1DX6lwuHxv3uWddhUrzZUz266CrKAFRfF25KdW4xwCMOcq34enqiImu9orNMK5VgoXjXpeVlM0wY7soGqaUCk5r9NVPZ_-Z9VZUpPMsWONzFYeA1t8ucBZov5TSvzgAYieETg83NU"/>
+<div class="absolute top-4 right-4 px-3 py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-bold shadow-sm">
+                            CLEANING
+                        </div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-lg font-bold text-emerald-900">Studio 205 — "Daybreak"</h4>
+<span class="text-lg font-black text-secondary">$280</span>
+</div>
+<div class="flex items-center gap-3 text-emerald-900/40 text-sm mb-6">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">bed</span> Queen</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">coffee</span> Bar</span>
+</div>
+<button class="w-full py-3 rounded-2xl bg-white/60 border border-emerald-900/10 text-emerald-900 font-bold hover:bg-emerald-900 hover:text-white transition-all group-hover:border-emerald-900">
+                            Book Room
+                        </button>
+</div>
+</div>
+<!-- Room Card 4 -->
+<div class="group bg-white/40 backdrop-blur-3xl rounded-lg overflow-hidden border border-white/40 hover:bg-white/60 transition-all duration-500 shadow-lg hover:shadow-2xl xl:translate-y-8">
+<div class="relative h-48 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="ultra luxury hotel suite with private plunge pool and expansive terrace overlooking a misty tropical valley" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBVSGWBNUiVxE5-HOGKhw0US9J2qsiRf20ZuEfMXsMBRQvtl07eGwPmQdrw2RgGfUuefYiJE75sgs1SXqIvLhMTOwUDvkcxMSMo0KuyWziFiRDNSUHJ9MllPKQM1L0d3lZssWh2bT0IktWndPlWKoWeZ83DBFd7JP8oIuH9DKE7BRKNLOQ8QfE2ruqGgup9cZDAs9Z9M5EheMSA1H1IRs91Fwaws4Ynx-grn78QiXZFEIEzXfOEC3pFA_NyR0DfPDoMaXXpf4ascg"/>
+<div class="absolute top-4 right-4 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold shadow-sm">
+                            AVAILABLE
+                        </div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-lg font-bold text-emerald-900">Penthouse — "The Canopy"</h4>
+<span class="text-lg font-black text-secondary">$1,200</span>
+</div>
+<div class="flex items-center gap-3 text-emerald-900/40 text-sm mb-6">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">pool</span> Pool</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_bar</span> Premium</span>
+</div>
+<button class="w-full py-3 rounded-2xl bg-white/60 border border-emerald-900/10 text-emerald-900 font-bold hover:bg-emerald-900 hover:text-white transition-all group-hover:border-emerald-900">
+                            Book Room
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Freshness Sparkline Section (Asymmetric) -->
+<section class="mt-24 grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 bg-emerald-900 text-white p-10 rounded-lg relative overflow-hidden shadow-2xl">
+<div class="relative z-10">
+<h3 class="text-2xl font-bold font-headline mb-4">Market Momentum</h3>
+<div class="flex items-end gap-1 h-32 mb-6">
+<div class="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style="height: 40%"></div>
+<div class="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style="height: 60%"></div>
+<div class="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style="height: 45%"></div>
+<div class="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style="height: 80%"></div>
+<div class="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style="height: 100%"></div>
+<div class="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style="height: 90%"></div>
+<div class="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style="height: 70%"></div>
+<div class="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style="height: 85%"></div>
+</div>
+<p class="text-white/60 font-medium">Booking momentum is 15% higher than average for this season.</p>
+</div>
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
+</div>
+<div class="bg-white/80 backdrop-blur-3xl p-8 rounded-lg border border-white/60 flex flex-col justify-center shadow-xl">
+<h4 class="text-on-surface-variant/40 font-bold uppercase tracking-widest text-xs mb-6 text-center">Guest Sentiment</h4>
+<div class="flex justify-center mb-6">
+<div class="w-32 h-32 rounded-full border-[12px] border-emerald-50 relative flex items-center justify-center">
+<div class="absolute inset-0 border-[12px] border-secondary rounded-full" style="clip-path: polygon(0 0, 100% 0, 100% 70%, 0 70%);"></div>
+<span class="text-3xl font-black text-emerald-900">4.9</span>
+</div>
+</div>
+<p class="text-emerald-900/60 text-sm text-center font-medium">Based on 1,240 verified guest reviews from the last 30 days.</p>
+</div>
+</section>
+</main>
+<!-- FAB for quick actions (Contextual) -->
+<div class="fixed bottom-8 right-8 z-40">
+<button class="w-16 h-16 bg-secondary text-white rounded-full flex items-center justify-center shadow-[0_16px_32px_rgba(0,107,92,0.3)] hover:scale-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-3xl" data-icon="edit_calendar">edit_calendar</span>
+</button>
+</div>
+</body></html>
