@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Coffee, Utensils, Pizza, Plus, Minus, Trash2, Receipt, CheckCircle2 } from 'lucide-react';
+import { Coffee, Utensils, Pizza, Plus, Minus, Receipt, CheckCircle2 } from 'lucide-react';
 
 // Static menu for now (We will wire this to your MySQL `menu_items` table next!)
 const MENU_CATEGORIES = ['All', 'Starters', 'Mains', 'Drinks'];
