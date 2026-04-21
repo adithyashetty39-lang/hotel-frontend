@@ -2,17 +2,20 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './pages/Dashboard';
-import { GuestProfile } from './pages/GuestProfile';
+import { GuestDirectory } from './pages/GuestDirectory';
 import { Bookings } from './pages/Bookings';
 import { Login } from './pages/Login';
 import { ManageStaff } from './pages/ManageStaff';
+import { ReceptionistPortal } from './pages/ReceptionistPortal';
+import { RestaurantPOS } from './pages/RestaurantPOS';
+import { AdminRooms } from './pages/AdminRooms';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
-// --- THE BOUNCER (Route Protection) ---
-// This checks if the user has a badge (token) in their browser memory.
+// --- THE FRONT DOOR BOUNCER ---
+// Ensures the user is logged in before loading the layout shell
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
-  // If they have a token, let them see the page. If not, kick to /login.
-  return token ? children : <Navigate to="/login" replace />;
+  return token ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
 export const App: React.FC = () => {
@@ -31,11 +34,51 @@ export const App: React.FC = () => {
             <AppLayout />
           </PrivateRoute>
         }>
-          {/* These pages render INSIDE the AppLayout sidebar */}
-          <Route index element={<Dashboard />} />
-          <Route path="guest" element={<GuestProfile />} />
-          <Route path="bookings" element={<Bookings />} />
-          <Route path="staff" element={<ManageStaff />} /> {/* <-- MOVED THIS HERE! */}
+          
+          {/* --- ADMIN & RECEPTIONIST ONLY --- */}
+          <Route index element={
+            <ProtectedRoute allowedRoles={['Admin', 'Receptionist']}>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="guest" element={
+            <ProtectedRoute allowedRoles={['Admin', 'Receptionist']}>
+              <GuestDirectory />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="bookings" element={
+            <ProtectedRoute allowedRoles={['Admin', 'Receptionist']}>
+              <Bookings />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="new-booking" element={
+            <ProtectedRoute allowedRoles={['Admin', 'Receptionist']}>
+              <ReceptionistPortal />
+            </ProtectedRoute>
+          } />
+
+          {/* --- STRICTLY ADMIN ONLY --- */}
+          <Route path="staff" element={
+            <ProtectedRoute allowedRoles={['Admin']}>
+              <ManageStaff />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="rooms" element={
+            <ProtectedRoute allowedRoles={['Admin']}>
+              <AdminRooms />
+            </ProtectedRoute>
+          } />
+
+          {/* --- EVERYONE ALLOWED (Admin, Receptionist, Waiter) --- */}
+          <Route path="pos" element={
+            <ProtectedRoute allowedRoles={['Admin', 'Receptionist', 'Waiter']}>
+              <RestaurantPOS />
+            </ProtectedRoute>
+          } />
           
           {/* If they type a weird URL inside the dashboard, send them back to the main dash */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

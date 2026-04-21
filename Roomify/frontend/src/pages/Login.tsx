@@ -28,6 +28,7 @@ export const Login: React.FC = () => {
       const data = await response.json();
 if (response.ok) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
         
         // Decode the token to see who just logged in
         const decodedToken: any = jwtDecode(data.token);
@@ -39,7 +40,7 @@ if (response.ok) {
         } else if (userRole === 'Restaurant') {
           navigate('/pos'); // Waiters go straight to the food ordering system
         } else if (userRole === 'Receptionist') {
-          navigate('/rooms'); // Reception goes straight to room bookings
+          navigate('/dashboard'); // Reception goes straight to room bookings
         } else {
           navigate('/dashboard'); // Default fallback
         }

@@ -1,172 +1,248 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// Note: We completely removed the static mockData import!
+// Premium, moody, natural aesthetic image array to replace the broken Unsplash API
+const PREMIUM_ROOM_IMAGES = [
+  "https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1590490359683-658d34c8f11f?q=80&w=600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1536270560716-16ce345097bc?q=80&w=600&auto=format&fit=crop"
+];
 
 export const Dashboard: React.FC = () => {
+  // Room & API States
   const [rooms, setRooms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Checkout & Invoice States
+  const [checkoutRoom, setCheckoutRoom] = useState<any>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
+  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+  const [finalInvoiceData, setFinalInvoiceData] = useState<any>(null);
+  const [restaurantTab, setRestaurantTab] = useState(0);
+  const [isFetchingTab, setIsFetchingTab] = useState(false);
+
+  // Live Metrics & Modal State
+  const [metrics, setMetrics] = useState({ arrivals: 0, hosted: 0, revenue: 0, roomRevenue: 0, posRevenue: 0 });
+  const [showRevenueBreakdown, setShowRevenueBreakdown] = useState(false);
+  
   const navigate = useNavigate();
 
-  // 1. Fetch Real Data when the Dashboard loads
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        
-        // If no token exists, kick them back to login
-        if (!token) {
-          navigate('/');
-          return;
-        }
+  const fetchRooms = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return navigate('/');
+      
+      const roomRes = await fetch('http://localhost:5000/api/rooms', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!roomRes.ok) throw new Error('Failed to fetch room data');
+      const roomData = await roomRes.json();
+      setRooms(roomData); 
 
-        const response = await fetch('http://localhost:5000/api/rooms', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch real room data');
-        }
-
-        const data = await response.json();
-        setRooms(data); // Save your real database rooms to state!
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      // Fetch Real Live Analytics
+      const analyticsRes = await fetch('http://localhost:5000/api/analytics/dashboard', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (analyticsRes.ok) {
+        const analyticsData = await analyticsRes.json();
+        setMetrics(analyticsData);
       }
-    };
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchRooms();
   }, [navigate]);
 
-  // 2. Calculate Real Metrics based on your database
-  const totalRooms = rooms.length;
-  const occupiedRooms = rooms.filter(r => r.status === 'Occupied').length;
-  const realOccupancyRate = totalRooms === 0 ? 0 : Math.round((occupiedRooms / totalRooms) * 100);
-
-  // We will keep a few static metrics for things we haven't built APIs for yet
-  const metrics = {
-    occupancyTrend: 5,
-    arrivals: 12, 
-    revenue: 45200,
-    rating: 4.8,
-    reviews: 124
+  const handleOpenCheckout = async (room: any) => {
+    setCheckoutRoom(room);
+    setRestaurantTab(0);
+    setIsFetchingTab(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/restaurant/tab/${room.room_id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (data.total) {
+        setRestaurantTab(data.total);
+      }
+    } catch (err) {
+      console.error("Failed to fetch restaurant tab", err);
+    } finally {
+      setIsFetchingTab(false);
+    }
   };
 
-  if (loading) return <div className="p-10 text-white font-bold text-xl">Loading live hotel data...</div>;
-  if (error) return <div className="p-10 text-red-500 font-bold text-xl">Error: {error}</div>;
+  const handleProcessCheckout = async () => {
+    setIsCheckingOut(true);
+    setCheckoutError('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/bookings/checkout/${checkoutRoom.room_id}`, {
+        method: 'POST', 
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Checkout failed.');
+
+      // Set the invoice data and show the success screen!
+      setFinalInvoiceData(data.invoiceData);
+      setCheckoutSuccess(true);
+      await fetchRooms(); 
+    } catch (err: any) {
+      setCheckoutError(err.message);
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
+
+  const totalRooms = rooms.length;
+  const occupiedRooms = rooms.filter(r => r.status === 'Occupied' || r.status === 'OCCUPIED').length;
+  const realOccupancyRate = totalRooms === 0 ? 0 : Math.round((occupiedRooms / totalRooms) * 100);
+
+  if (loading) return <div className="p-10 text-white font-bold text-xl flex items-center gap-3"><span className="material-symbols-outlined animate-spin">sync</span> Loading live hotel data...</div>;
+  if (error) return <div className="p-10 text-red-500 font-bold text-xl bg-red-50 rounded-2xl m-8 border border-red-200">Error: {error}</div>;
 
   return (
     <>
-      {/* Metrics Row */}
+      {/* --- UPGRADED PREMIUM METRICS ROW --- */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {/* Occupancy - NOW DYNAMIC! */}
+        
+        {/* Occupancy Card */}
         <div className="relative group">
-          <div className="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
-          <div className="relative bg-white/60 backdrop-blur-3xl p-8 rounded-lg border border-white/40 shadow-xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
+          <div className="relative bg-white/50 backdrop-blur-3xl p-8 rounded-3xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)]">
             <div className="flex justify-between items-start mb-4">
-              <span className="text-on-surface-variant/60 font-semibold text-sm uppercase tracking-wider">Occupancy Rate</span>
-              <div className="p-2 bg-secondary/10 text-secondary rounded-full">
+              <span className="text-primary/70 font-bold text-sm uppercase tracking-widest">Occupancy Rate</span>
+              <div className="p-2 bg-secondary/20 text-secondary rounded-xl backdrop-blur-md">
                 <span className="material-symbols-outlined">trending_up</span>
               </div>
             </div>
-            <div className="text-5xl font-extrabold text-primary font-headline mb-1">{realOccupancyRate}%</div>
-            <div className="flex items-center gap-2 text-secondary font-semibold text-sm">
-              <span>Real-time calculation</span>
+            <div className="text-6xl font-extrabold text-primary font-headline mb-2">{realOccupancyRate}%</div>
+            <div className="flex items-center gap-2 text-secondary font-bold text-sm">
+              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+              <span>Live Calculation</span>
             </div>
           </div>
         </div>
 
-        {/* Arrivals (Static for now) */}
+        {/* Hosted Guests Card */}
         <div className="relative group md:translate-y-4">
-          <div className="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
-          <div className="relative bg-white/80 backdrop-blur-3xl p-8 rounded-lg border border-white/60 shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
+          <div className="relative bg-white/50 backdrop-blur-3xl p-8 rounded-3xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)]">
             <div className="flex justify-between items-start mb-4">
-              <span className="text-on-surface-variant/60 font-semibold text-sm uppercase tracking-wider">Today's Arrivals</span>
-              <div className="p-2 bg-primary/10 text-primary rounded-full">
-                <span className="material-symbols-outlined">luggage</span>
+              <span className="text-primary/70 font-bold text-sm uppercase tracking-widest">Currently Hosted</span>
+              <div className="p-2 bg-primary/10 text-primary rounded-xl backdrop-blur-md">
+                <span className="material-symbols-outlined">key</span>
               </div>
             </div>
-            <div className="text-5xl font-extrabold text-primary font-headline mb-1">{metrics.arrivals}</div>
-            <div className="flex items-center gap-2 text-on-surface-variant/40 font-semibold text-sm">
-              <span>8 check-ins remaining</span>
+            <div className="text-6xl font-extrabold text-primary font-headline mb-2">{metrics.hosted}</div>
+            <div className="flex items-center gap-2 text-primary/50 font-bold text-sm">
+              <span>Active rooms right now</span>
             </div>
           </div>
         </div>
 
-        {/* Revenue (Static for now) */}
-        <div className="relative group">
-          <div className="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
-          <div className="relative bg-white/60 backdrop-blur-3xl p-8 rounded-lg border border-white/40 shadow-xl">
+        {/* --- CLICKABLE REVENUE CARD --- */}
+        <div 
+          onClick={() => setShowRevenueBreakdown(true)}
+          className="relative group cursor-pointer active:scale-95 transition-transform"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 blur-xl group-hover:bg-white/30 transition-all rounded-3xl"></div>
+          <div className="relative bg-white/50 backdrop-blur-3xl p-8 rounded-3xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)] group-hover:border-emerald-300">
             <div className="flex justify-between items-start mb-4">
-              <span className="text-on-surface-variant/60 font-semibold text-sm uppercase tracking-wider">Total Revenue</span>
-              <div className="p-2 bg-primary/10 text-primary rounded-full">
+              <span className="text-primary/70 font-bold text-sm uppercase tracking-widest">Total Revenue</span>
+              <div className="p-2 bg-emerald-100 text-emerald-700 rounded-xl backdrop-blur-md">
                 <span className="material-symbols-outlined">payments</span>
               </div>
             </div>
-            <div className="text-5xl font-extrabold text-primary font-headline mb-1">${metrics.revenue.toLocaleString()}</div>
-            <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <span>Peak performance</span>
+            <div className="text-5xl font-extrabold text-primary font-headline mb-2 truncate">
+              ₹{metrics.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+            </div>
+            <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
+              <span className="material-symbols-outlined text-sm">ads_click</span>
+              <span>Click for breakdown</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Room Status Widget Section - NOW RENDERING REAL DATABASE ROWS! */}
+      {/* Room Status Widget Section */}
       <section className="mt-16">
         <div className="flex justify-between items-end mb-8">
           <div>
             <h3 className="text-3xl font-extrabold text-primary font-headline leading-tight">Live Directory</h3>
-            <p className="text-primary/60 font-medium">Real-time availability from your secure MySQL Backend</p>
-          </div>
-          <div className="flex gap-2 bg-white/40 backdrop-blur-md p-1.5 rounded-full border border-white/40">
-            <button className="px-6 py-2 rounded-full bg-white text-primary font-bold shadow-sm transition-all">All</button>
-            <button className="px-6 py-2 rounded-full text-primary/60 font-bold hover:bg-white/20 transition-all">Available</button>
-            <button className="px-6 py-2 rounded-full text-primary/60 font-bold hover:bg-white/20 transition-all">Occupied</button>
+            <p className="text-primary/60 font-medium mt-1">Real-time physical inventory mapped to your secure MySQL Backend</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
           {rooms.map((room, i) => (
-            <div key={room.room_id} className={`group bg-white/40 backdrop-blur-3xl rounded-lg overflow-hidden border border-white/40 hover:bg-white/60 transition-all duration-500 shadow-lg hover:shadow-2xl ${i % 2 !== 0 ? 'xl:translate-y-8' : ''}`}>
-              <div className="relative h-48 overflow-hidden bg-primary/10">
-                {/* Fallback Image since we don't store photos in the DB yet */}
+            <div key={room.room_id} className={`group bg-white/60 backdrop-blur-3xl rounded-3xl overflow-hidden border border-white/60 hover:bg-white/80 transition-all duration-500 shadow-lg hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] ${i % 2 !== 0 ? 'xl:translate-y-8' : ''}`}>
+              <div className="relative h-56 overflow-hidden bg-primary/10">
                 <img 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                  src={`https://source.unsplash.com/random/400x300/?hotel,room&sig=${room.room_id}`} 
-                  alt="Room" 
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                  src={PREMIUM_ROOM_IMAGES[i % PREMIUM_ROOM_IMAGES.length]} 
+                  alt={`Room ${room.room_number}`} 
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
                 
-                {/* Dynamic Status Pill */}
-                <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold shadow-sm 
-                  ${room.status === 'Available' ? 'bg-emerald-100 text-emerald-800' : 
-                    room.status === 'Occupied' ? 'bg-red-100 text-red-800' : 
-                    'bg-yellow-100 text-yellow-800'}`}>
+                <div className={`absolute top-4 right-4 px-4 py-1.5 rounded-full text-xs font-black tracking-wider shadow-lg backdrop-blur-md border border-white/20
+                  ${room.status === 'Available' || room.status === 'AVAILABLE' ? 'bg-emerald-500/80 text-white' : 
+                    room.status === 'Occupied' || room.status === 'OCCUPIED' ? 'bg-red-500/80 text-white' : 
+                    'bg-amber-500/80 text-white'}`}>
                   {room.status.toUpperCase()}
                 </div>
+                
+                <div className="absolute bottom-4 left-4">
+                   <h4 className="text-2xl font-black text-white font-headline drop-shadow-md">Room {room.room_number}</h4>
+                   <span className="text-sm text-white/80 font-bold block drop-shadow-md">{room.type}</span>
+                </div>
               </div>
+
               <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  {/* Pulling room_number and type from your DB */}
-                  <h4 className="text-lg font-bold text-primary">Room {room.room_number} <span className="text-sm text-primary/60 block">{room.type}</span></h4>
-                  {/* Pulling price_per_night from your DB */}
-                  <span className="text-lg font-black text-secondary">₹{room.price_per_night}</span>
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-3 text-primary/40 text-sm">
+                    <span className="flex items-center gap-1 bg-surface-variant/50 p-2 rounded-lg"><span className="material-symbols-outlined text-sm">wifi</span></span>
+                    <span className="flex items-center gap-1 bg-surface-variant/50 p-2 rounded-lg"><span className="material-symbols-outlined text-sm">tv</span></span>
+                    <span className="flex items-center gap-1 bg-surface-variant/50 p-2 rounded-lg"><span className="material-symbols-outlined text-sm">ac_unit</span></span>
+                  </div>
+                  <span className="text-xl font-black text-secondary">₹{Number(room.price_per_night).toLocaleString('en-IN')}</span>
                 </div>
                 
-                {/* Hardcoded amenities just for visual flair for now */}
-                <div className="flex items-center gap-3 text-primary/40 text-sm mb-6">
-                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">wifi</span></span>
-                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">tv</span></span>
-                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">ac_unit</span></span>
-                </div>
-                
-                <button className="w-full py-3 rounded-2xl bg-white/60 border border-primary/10 text-primary font-bold hover:bg-primary hover:text-white transition-all group-hover:border-primary">
-                  Manage Room
+                <button 
+                  onClick={() => {
+                    if (room.status === 'Available' || room.status === 'AVAILABLE') {
+                      navigate('/dashboard/new-booking');
+                    } else if (room.status === 'Occupied' || room.status === 'OCCUPIED') {
+                      handleOpenCheckout(room); 
+                    }
+                  }}
+                  disabled={room.status === 'Maintenance' || room.status === 'MAINTENANCE'}
+                  className={`w-full py-4 rounded-xl font-black tracking-wide transition-all border-2 
+                    ${room.status === 'Available' || room.status === 'AVAILABLE' 
+                      ? 'bg-transparent border-primary text-primary hover:bg-primary hover:text-white' 
+                      : room.status === 'Occupied' || room.status === 'OCCUPIED'
+                      ? 'bg-red-50 border-red-200 text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600'
+                      : 'bg-surface-variant border-outline-variant/30 text-on-surface-variant/50 cursor-not-allowed'
+                    }`}
+                >
+                  {(room.status === 'Available' || room.status === 'AVAILABLE') ? 'Book Room' : 
+                   (room.status === 'Occupied' || room.status === 'OCCUPIED') ? 'Manage Check-out' : 
+                   'Under Maintenance'}
                 </button>
               </div>
             </div>
@@ -174,32 +250,155 @@ export const Dashboard: React.FC = () => {
         </div>
       </section>
 
-      {/* Freshness Sparkline Section (Static Design element) */}
-      <section className="mt-24 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-primary text-white p-10 rounded-lg relative overflow-hidden shadow-2xl">
-          <div className="relative z-10">
-            <h3 className="text-2xl font-bold font-headline mb-4">Market Momentum</h3>
-            <div className="flex items-end gap-1 h-32 mb-6">
-              {[40, 60, 45, 80, 100, 90, 70, 85].map((h, idx) => (
-                <div key={idx} className="flex-1 bg-secondary/30 rounded-full hover:bg-secondary transition-all" style={{ height: `${h}%` }}></div>
-              ))}
-            </div>
-            <p className="text-white/60 font-medium">Booking momentum is 15% higher than average for this season.</p>
-          </div>
-          <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
-        </div>
+      {/* --- CHECKOUT & INVOICE MODAL --- */}
+      {checkoutRoom && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in print:bg-white print:p-0">
+          
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative border border-white/20 print:shadow-none print:border-none print:w-full print:max-w-full">
+            
+            <button 
+              onClick={() => { setCheckoutRoom(null); setCheckoutSuccess(false); setFinalInvoiceData(null); }}
+              className="absolute top-6 right-6 text-primary/40 hover:text-red-500 transition-colors bg-surface-variant/50 p-2 rounded-full print:hidden"
+            >
+              <span className="material-symbols-outlined text-sm">close</span>
+            </button>
 
-        <div className="bg-white/80 backdrop-blur-3xl p-8 rounded-lg border border-white/60 flex flex-col justify-center shadow-xl">
-          <h4 className="text-on-surface-variant/40 font-bold uppercase tracking-widest text-xs mb-6 text-center">Guest Sentiment</h4>
-          <div className="flex justify-center mb-6">
-            <div className="w-32 h-32 rounded-full border-[12px] border-emerald-50 relative flex items-center justify-center">
-              <div className="absolute inset-0 border-[12px] border-secondary rounded-full clip-triangle"></div>
-              <span className="text-3xl font-black text-primary">{metrics.rating}</span>
-            </div>
+            {!checkoutSuccess ? (
+              // --- STANDARD CHECKOUT VIEW ---
+              <>
+                <h2 className="text-3xl font-headline font-black text-primary mb-1">Finalize Checkout</h2>
+                <p className="text-primary/60 font-bold text-sm mb-8 tracking-widest uppercase">Room {checkoutRoom.room_number} • {checkoutRoom.type}</p>
+
+                {checkoutError && (
+                  <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-xl text-sm font-bold border border-red-100 flex items-center gap-2">
+                    <span className="material-symbols-outlined">error</span>
+                    {checkoutError}
+                  </div>
+                )}
+
+                <div className="bg-surface-variant/40 rounded-2xl p-6 mb-8 border border-outline-variant/20 shadow-inner">
+                  <div className="flex justify-between mb-4 text-sm text-primary font-bold">
+                    <span>Base Rate (1 Night)</span>
+                    <span>₹{Number(checkoutRoom.price_per_night).toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="flex justify-between mb-4 text-sm text-primary font-bold">
+                    <span>Hotel Taxes (12%)</span>
+                    <span>₹{Math.round(checkoutRoom.price_per_night * 0.12).toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="flex justify-between mb-4 text-sm text-primary font-bold">
+                    <span>Restaurant Charges</span>
+                    <span className={restaurantTab > 0 ? "text-secondary font-black" : "text-primary/50"}>
+                      {isFetchingTab ? 'Loading...' : `₹${Number(restaurantTab).toLocaleString('en-IN')}`}
+                    </span>
+                  </div>
+                  <div className="w-full h-px bg-outline-variant/40 my-6"></div>
+                  <div className="flex justify-between text-2xl font-black text-primary font-headline items-center">
+                    <span>Total Due</span>
+                    <span className="text-emerald-600 text-3xl">₹{(Math.round(checkoutRoom.price_per_night * 1.12) + Number(restaurantTab)).toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleProcessCheckout}
+                  disabled={isCheckingOut || isFetchingTab}
+                  className="w-full py-4 bg-primary hover:bg-primary-container text-white font-bold tracking-widest uppercase rounded-2xl flex justify-center items-center gap-2 transition-all shadow-xl disabled:opacity-50 active:scale-95"
+                >
+                  <span className="material-symbols-outlined">receipt_long</span>
+                  {isCheckingOut ? 'Processing...' : 'Process Payment'}
+                </button>
+              </>
+            ) : (
+              // --- SUCCESS & PRINT VIEW ---
+              <div className="text-center">
+                <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 print:hidden">
+                  <span className="material-symbols-outlined text-4xl text-emerald-600">check_circle</span>
+                </div>
+                
+                <h2 className="text-3xl font-headline font-black text-primary mb-1">Payment Successful</h2>
+                <p className="text-primary/60 font-bold text-sm mb-8 tracking-widest uppercase">{finalInvoiceData?.invoiceNo}</p>
+
+                <div className="bg-white border-2 border-outline-variant/30 rounded-2xl p-6 text-left mb-8 print:border-none print:p-0">
+                   <h3 className="font-black text-primary mb-4 border-b pb-2">Invoice Summary</h3>
+                   <div className="flex justify-between text-sm mb-2 font-medium"><span>Room Subtotal</span> <span>₹{finalInvoiceData?.roomSubtotal.toLocaleString('en-IN')}</span></div>
+                   <div className="flex justify-between text-sm mb-2 font-medium"><span>Restaurant</span> <span>₹{finalInvoiceData?.foodTotal.toLocaleString('en-IN')}</span></div>
+                   <div className="flex justify-between text-sm mb-2 font-medium"><span>Total Taxes</span> <span>₹{finalInvoiceData?.taxes.toLocaleString('en-IN')}</span></div>
+                   <div className="w-full h-px bg-outline-variant/40 my-4"></div>
+                   <div className="flex justify-between font-black text-xl text-primary"><span>Grand Total</span> <span>₹{finalInvoiceData?.grandTotal.toLocaleString('en-IN')}</span></div>
+                </div>
+
+                <div className="flex gap-4 print:hidden">
+                  <button 
+                    onClick={() => window.print()}
+                    className="flex-1 py-4 bg-secondary hover:bg-secondary-container text-white font-bold tracking-widest uppercase rounded-2xl flex justify-center items-center gap-2 transition-all shadow-xl active:scale-95"
+                  >
+                    <span className="material-symbols-outlined">print</span>
+                    Print / Save PDF
+                  </button>
+                  <button 
+                    onClick={() => { setCheckoutRoom(null); setCheckoutSuccess(false); setFinalInvoiceData(null); }}
+                    className="flex-1 py-4 bg-surface-variant text-primary font-bold tracking-widest uppercase rounded-2xl hover:bg-outline-variant/30 transition-all"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          <p className="text-primary/60 text-sm text-center font-medium">Based on {metrics.reviews.toLocaleString()} verified guest reviews from the last 30 days.</p>
         </div>
-      </section>
+      )}
+
+      {/* --- REVENUE BREAKDOWN MODAL --- */}
+      {showRevenueBreakdown && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative border border-white/20">
+            <button 
+              onClick={() => setShowRevenueBreakdown(false)}
+              className="absolute top-6 right-6 text-primary/40 hover:text-red-500 transition-colors bg-surface-variant/50 p-2 rounded-full"
+            >
+              <span className="material-symbols-outlined text-sm">close</span>
+            </button>
+
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
+              <span className="material-symbols-outlined text-3xl text-emerald-600">bar_chart</span>
+            </div>
+
+            <h2 className="text-3xl font-headline font-black text-primary mb-1">Revenue Breakdown</h2>
+            <p className="text-primary/60 font-bold text-sm mb-8 tracking-widest uppercase">Verified from Database</p>
+
+            <div className="bg-surface-variant/40 rounded-2xl p-6 mb-8 border border-outline-variant/20">
+              <div className="flex justify-between items-center mb-4 text-primary font-bold">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-sm text-secondary">bed</span>
+                  <span>Room Revenue</span>
+                </div>
+                <span>₹{metrics.roomRevenue.toLocaleString('en-IN')}</span>
+              </div>
+              
+              <div className="flex justify-between items-center mb-4 text-primary font-bold">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-sm text-secondary">restaurant</span>
+                  <span>Restaurant POS</span>
+                </div>
+                <span>₹{metrics.posRevenue.toLocaleString('en-IN')}</span>
+              </div>
+              
+              <div className="w-full h-px bg-outline-variant/40 my-6"></div>
+              
+              <div className="flex justify-between text-2xl font-black text-emerald-700 font-headline items-center">
+                <span>Grand Total</span>
+                <span>₹{metrics.revenue.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setShowRevenueBreakdown(false)}
+              className="w-full py-4 bg-primary hover:bg-primary-container text-white font-bold tracking-widest uppercase rounded-2xl transition-all shadow-xl active:scale-95"
+            >
+              Close Window
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -1,94 +1,125 @@
-import React from 'react';
-import { mockData } from '../data/mockData';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Calendar, BedDouble, Filter, Plus } from 'lucide-react';
 
 export const Bookings: React.FC = () => {
-  const { bookings } = mockData;
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        // We reuse the guests route because it contains the perfect JOIN of all tables!
+        const response = await fetch('http://localhost:5000/api/guests', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        setBookings(data);
+      } catch (err) {
+        console.error("Failed to fetch bookings", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBookings();
+  }, []);
+
+  const filteredBookings = bookings.filter(b => 
+    b.guest_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    b.room_number.toString().includes(searchTerm) ||
+    b.booking_id.toString().includes(searchTerm)
+  );
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="flex-1 bg-gradient-to-br from-surface-variant/40 to-white/20 backdrop-blur-3xl rounded-3xl p-10 border border-white/60 shadow-2xl overflow-y-auto h-[85vh]">
+      
+      {/* Header */}
+      <div className="flex justify-between items-start mb-8">
         <div>
-          <h2 className="text-3xl font-extrabold text-primary font-headline leading-tight">Master Directory</h2>
-          <p className="text-primary/60 font-medium">Manage and review all active reservations.</p>
+          <h2 className="text-3xl font-headline font-black text-primary">Master Directory</h2>
+          <p className="text-on-surface-variant font-medium mt-1">Manage and review all active reservations.</p>
         </div>
-        <button className="bg-primary text-white py-3 px-6 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20">
-          <span className="material-symbols-outlined">add</span>
+        
+        {/* --- THE FIX: WIRED UP THE NEW BOOKING BUTTON --- */}
+        <button 
+          onClick={() => navigate('/dashboard/new-booking')}
+          className="bg-primary text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-lg active:scale-95"
+        >
+          <Plus className="w-5 h-5" />
           New Booking
         </button>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white/60 backdrop-blur-3xl p-4 rounded-full border border-white/40 shadow-sm flex flex-col md:flex-row gap-4 items-center">
-        <div className="relative flex-1 w-full">
-          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60">search</span>
-          <input 
-            className="w-full bg-white/40 border border-white/50 rounded-full py-2.5 pl-12 pr-4 focus:ring-2 focus:ring-secondary/20 placeholder:text-on-surface-variant/40 text-sm transition-all outline-none" 
-            placeholder="Search by ID, Guest, or Room..." 
+      {/* Search & Filters */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="w-5 h-5 text-primary/40 absolute left-4 top-1/2 -translate-y-1/2" />
+          <input
             type="text"
+            placeholder="Search by ID, Guest, or Room..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-white/60 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-secondary/30 shadow-sm font-medium text-primary placeholder:text-primary/40 transition-all"
           />
         </div>
-        <div className="h-8 w-px bg-primary/10 hidden md:block"></div>
-        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
-          <button className="px-5 py-2 rounded-full border border-primary/20 text-primary font-bold hover:bg-white/40 transition-all flex items-center gap-2 whitespace-nowrap">
-            <span className="material-symbols-outlined text-sm">calendar_today</span>
-            Any Dates
-          </button>
-          <button className="px-5 py-2 rounded-full border border-primary/20 text-primary font-bold hover:bg-white/40 transition-all flex items-center gap-2 whitespace-nowrap">
-            <span className="material-symbols-outlined text-sm">key</span>
-            Room Type
-          </button>
-          <button className="px-5 py-2 rounded-full border border-primary/20 text-primary font-bold hover:bg-white/40 transition-all flex items-center gap-2 whitespace-nowrap">
-            <span className="material-symbols-outlined text-sm">filter_list</span>
-            Status
-          </button>
+        <div className="flex gap-2">
+          <button className="px-4 py-3 bg-white/60 border border-white/40 rounded-2xl text-primary font-bold flex items-center gap-2 hover:bg-white transition-all"><Calendar className="w-4 h-4"/> Any Dates</button>
+          <button className="px-4 py-3 bg-white/60 border border-white/40 rounded-2xl text-primary font-bold flex items-center gap-2 hover:bg-white transition-all"><BedDouble className="w-4 h-4"/> Room Type</button>
+          <button className="px-4 py-3 bg-white/60 border border-white/40 rounded-2xl text-primary font-bold flex items-center gap-2 hover:bg-white transition-all"><Filter className="w-4 h-4"/> Status</button>
         </div>
       </div>
 
-      {/* Bookings Table / Catalog */}
-      <div className="bg-white/60 backdrop-blur-3xl rounded-[24px] border border-white/40 shadow-xl overflow-hidden mt-8">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[800px]">
-            <thead>
-              <tr className="bg-white/40 border-b border-primary/10">
-                <th className="py-4 px-6 text-sm font-bold text-primary/60 uppercase tracking-widest w-16">ID</th>
-                <th className="py-4 px-6 text-sm font-bold text-primary/60 uppercase tracking-widest">Guest</th>
-                <th className="py-4 px-6 text-sm font-bold text-primary/60 uppercase tracking-widest">Room</th>
-                <th className="py-4 px-6 text-sm font-bold text-primary/60 uppercase tracking-widest">Dates</th>
-                <th className="py-4 px-6 text-sm font-bold text-primary/60 uppercase tracking-widest">Status</th>
-                <th className="py-4 px-6 text-sm font-bold text-primary/60 uppercase tracking-widest text-right">Amount</th>
-                <th className="py-4 px-6 text-sm font-bold text-primary/60 uppercase tracking-widest text-right"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.map((booking, idx) => (
-                <tr key={booking.id} className={`hover:bg-white/40 transition-colors ${idx !== bookings.length - 1 ? 'border-b border-primary/5' : ''}`}>
-                  <td className="py-4 px-6 font-semibold text-primary/60 text-sm">{booking.id}</td>
-                  <td className="py-4 px-6">
+      {/* Directory Table */}
+      <div className="bg-white/70 rounded-3xl border border-white/60 overflow-hidden shadow-sm">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-surface-variant/30 text-primary/50 text-xs uppercase tracking-widest border-b border-outline-variant/20">
+              <th className="p-6 font-bold">ID</th>
+              <th className="p-6 font-bold">Guest</th>
+              <th className="p-6 font-bold">Room</th>
+              <th className="p-6 font-bold">Dates</th>
+              <th className="p-6 font-bold text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={5} className="p-10 text-center font-bold text-primary/50">Loading database...</td></tr>
+            ) : filteredBookings.length > 0 ? (
+              filteredBookings.map((b) => (
+                <tr key={b.booking_id} className="border-b border-outline-variant/10 hover:bg-white/80 transition-colors group">
+                  <td className="p-6 font-medium text-primary/50 text-sm">BK-{b.booking_id.toString().padStart(4, '0')}</td>
+                  <td className="p-6">
                     <div className="flex items-center gap-3">
-                      <img src={booking.avatar} alt={booking.guestName} className="w-10 h-10 rounded-full object-cover border-2 border-white" />
-                      <span className="font-bold text-primary">{booking.guestName}</span>
+                      <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xs uppercase">
+                        {b.guest_name.substring(0, 2)}
+                      </div>
+                      <span className="font-bold text-primary">{b.guest_name}</span>
                     </div>
                   </td>
-                  <td className="py-4 px-6 font-bold text-primary">{booking.roomName}</td>
-                  <td className="py-4 px-6 text-primary/70">{booking.checkIn} - {booking.checkOut}</td>
-                  <td className="py-4 px-6">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      booking.status === 'Confirmed' ? 'bg-secondary-container text-on-secondary-container' : 'bg-white text-primary border border-primary/20'
-                    }`}>
-                      {booking.status}
+                  <td className="p-6 font-bold text-primary">{b.room_number} <span className="text-xs text-primary/50 font-medium block">{b.room_type}</span></td>
+                  <td className="p-6 text-sm font-medium text-primary/70">
+                    {new Date(b.check_in).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })} 
+                    <span className="mx-2 text-primary/30">→</span> 
+                    {new Date(b.check_out).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                  </td>
+                  <td className="p-6 text-center">
+                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider
+                      ${b.status === 'Active' ? 'bg-cyan-100 text-cyan-800' : 
+                        b.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 
+                        'bg-surface-variant text-on-surface-variant'}`}>
+                      {b.status === 'Active' ? 'Confirmed' : b.status}
                     </span>
                   </td>
-                  <td className="py-4 px-6 font-black text-secondary text-right">${booking.amount.toLocaleString()}</td>
-                  <td className="py-4 px-6 text-right">
-                    <button className="p-2 rounded-full hover:bg-black/5 text-primary transition-all">
-                      <span className="material-symbols-outlined">more_horiz</span>
-                    </button>
-                  </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+            ) : (
+              <tr><td colSpan={5} className="p-10 text-center font-medium text-primary/50">No bookings found.</td></tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

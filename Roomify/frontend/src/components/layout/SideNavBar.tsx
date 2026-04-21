@@ -83,7 +83,10 @@ export const SideNavBar: React.FC = () => {
       <div className="mt-auto flex flex-col gap-3">
         {/* Only Admins and Receptionists should be able to book rooms */}
         {(userRole === 'Admin' || userRole === 'Receptionist') && (
-          <button className="bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20">
+          <button 
+            onClick={() => navigate('/dashboard/new-booking')} 
+            className="bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20"
+          >
             <span className="material-symbols-outlined">add_circle</span>
             New Booking
           </button>
