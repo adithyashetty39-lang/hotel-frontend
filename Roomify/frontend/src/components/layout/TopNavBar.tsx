@@ -19,10 +19,11 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ onMenuClick }) => {
         </button>
       </div>
 
-      {/* Organic Concierge Search Bar */}
+      {/* Paramvah Search Bar */}
       <div className="hidden md:flex flex-1 max-w-2xl mx-auto items-center gap-4 pointer-events-auto">
          <div className="flex-1 bg-white/70 backdrop-blur-md px-6 py-4 rounded-full flex items-center gap-3 shadow-sm border border-white/40">
-            <span className="font-bold text-primary whitespace-nowrap">Organic Concierge</span>
+            {/* --- NAME CHANGED RIGHT HERE --- */}
+            <span className="font-bold text-primary whitespace-nowrap">Paramvah</span>
             <span className="w-px h-6 bg-primary/20 mx-2"></span>
             <span className="material-symbols-outlined text-primary/40">search</span>
             <input 
