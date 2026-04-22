@@ -24,7 +24,7 @@ export const ReceptionistPortal: React.FC = () => {
     const fetchRooms = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/rooms', {
+        const response = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/rooms', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -57,7 +57,7 @@ export const ReceptionistPortal: React.FC = () => {
       const token = localStorage.getItem('token');
       
       // Sending data to your secure backend
-      const response = await fetch('http://localhost:5000/api/bookings', {
+      const response = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/bookings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

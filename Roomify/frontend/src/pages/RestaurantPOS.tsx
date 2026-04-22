@@ -30,7 +30,7 @@ export const RestaurantPOS: React.FC = () => {
     const fetchRooms = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/rooms', {
+        const response = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/rooms', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -70,7 +70,7 @@ export const RestaurantPOS: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch('http://localhost:5000/api/restaurant/order', {
+      const response = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/restaurant/order', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -17,7 +17,7 @@ export const Login: React.FC = () => {
     setErrorMsg('');    // Clear old errors
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

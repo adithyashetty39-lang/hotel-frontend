@@ -37,7 +37,7 @@ export const Dashboard: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) return navigate('/');
       
-      const roomRes = await fetch('http://localhost:5000/api/rooms', {
+      const roomRes = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/rooms', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!roomRes.ok) throw new Error('Failed to fetch room data');
@@ -45,7 +45,7 @@ export const Dashboard: React.FC = () => {
       setRooms(roomData); 
 
       // Fetch Real Live Analytics
-      const analyticsRes = await fetch('http://localhost:5000/api/analytics/dashboard', {
+      const analyticsRes = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/analytics/dashboard', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (analyticsRes.ok) {
@@ -70,7 +70,7 @@ export const Dashboard: React.FC = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/restaurant/tab/${room.room_id}`, {
+      const response = await fetch(`https://hotel-management-system-1-ejha.onrender.com/api/restaurant/tab/${room.room_id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -90,7 +90,7 @@ export const Dashboard: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/bookings/checkout/${checkoutRoom.room_id}`, {
+      const response = await fetch(`https://hotel-management-system-1-ejha.onrender.com/api/bookings/checkout/${checkoutRoom.room_id}`, {
         method: 'POST', 
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
       });
