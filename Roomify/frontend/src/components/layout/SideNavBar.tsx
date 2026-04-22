@@ -2,10 +2,16 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-export const SideNavBar: React.FC = () => {
+// 1. Accept the props from AppLayout
+interface SideNavBarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const SideNavBar: React.FC<SideNavBarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
-  // 1. Read the user's role from their secure badge
+  // Read the user's role from their secure badge
   let userRole = 'Staff'; 
   try {
     const token = localStorage.getItem('token');
@@ -17,9 +23,10 @@ export const SideNavBar: React.FC = () => {
     console.error("Could not read token details.");
   }
 
-  // 2. Logout functionality
+  // Logout functionality
   const handleLogout = () => {
     localStorage.removeItem('token');
+    onClose(); // Close the menu when logging out
     navigate('/login');
   };
 
@@ -30,9 +37,24 @@ export const SideNavBar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed left-0 top-0 bottom-0 z-50 flex flex-col p-8 w-72 bg-white/70 backdrop-blur-2xl my-6 ml-6 rounded-[24px] shadow-[0_8px_32px_0_rgba(0,54,8,0.05)] hidden lg:flex">
-      <div className="mb-10 flex items-center gap-3">
-        <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+    // 2. The Magic Tailwind Classes for Mobile Sliding!
+    <nav className={`
+      fixed left-0 top-0 bottom-0 z-50 flex flex-col p-8 w-72 bg-white/90 lg:bg-white/70 backdrop-blur-3xl 
+      my-0 ml-0 lg:my-6 lg:ml-6 rounded-r-3xl lg:rounded-[24px] shadow-[20px_0_40px_0_rgba(0,0,0,0.1)] lg:shadow-[0_8px_32px_0_rgba(0,54,8,0.05)]
+      transition-transform duration-300 ease-in-out
+      lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-[120%]'}
+    `}>
+      
+      {/* Mobile Close Button (Hidden on Desktop) */}
+      <button 
+        onClick={onClose}
+        className="absolute top-6 right-6 p-2 bg-red-50 text-red-500 rounded-full lg:hidden active:scale-95 transition-transform"
+      >
+        <span className="material-symbols-outlined text-sm">close</span>
+      </button>
+
+      <div className="mb-10 flex items-center gap-3 mt-4 lg:mt-0">
+        <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
           <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>spa</span>
         </div>
         <div>
@@ -41,9 +63,9 @@ export const SideNavBar: React.FC = () => {
         </div>
       </div>
       
-      <div className="flex flex-col gap-2 flex-1">
+      <div className="flex flex-col gap-2 flex-1 overflow-y-auto">
         {/* EVERYONE SEES THE DASHBOARD OVERVIEW */}
-        <NavLink to="/dashboard" end className={getNavLinkClass}>
+        <NavLink to="/dashboard" end className={getNavLinkClass} onClick={onClose}>
           <span className="material-symbols-outlined">dashboard</span>
           <span className="font-body">Overview</span>
         </NavLink>
@@ -51,11 +73,11 @@ export const SideNavBar: React.FC = () => {
         {/* ADMIN & RECEPTIONIST ONLY */}
         {(userRole === 'Admin' || userRole === 'Receptionist') && (
           <>
-            <NavLink to="/dashboard/guest" className={getNavLinkClass}>
+            <NavLink to="/dashboard/guest" className={getNavLinkClass} onClick={onClose}>
               <span className="material-symbols-outlined">group</span>
               <span className="font-body">Guests</span>
             </NavLink>
-            <NavLink to="/dashboard/bookings" className={getNavLinkClass}>
+            <NavLink to="/dashboard/bookings" className={getNavLinkClass} onClick={onClose}>
               <span className="material-symbols-outlined">inventory_2</span>
               <span className="font-body">Bookings</span>
             </NavLink>
@@ -64,7 +86,7 @@ export const SideNavBar: React.FC = () => {
 
         {/* ADMIN & RESTAURANT STAFF ONLY */}
         {(userRole === 'Admin' || userRole === 'Waiter') && (
-          <NavLink to="/dashboard/pos" className={getNavLinkClass}>
+          <NavLink to="/dashboard/pos" className={getNavLinkClass} onClick={onClose}>
             <span className="material-symbols-outlined">restaurant</span>
             <span className="font-body">Restaurant POS</span>
           </NavLink>
@@ -72,19 +94,27 @@ export const SideNavBar: React.FC = () => {
 
         {/* ADMIN ONLY (The Secure Registration Door) */}
         {userRole === 'Admin' && (
-          <NavLink to="/dashboard/staff" className={getNavLinkClass}>
-            <span className="material-symbols-outlined">badge</span>
-            <span className="font-body">Manage Staff</span>
-          </NavLink>
+          <>
+            <div className="w-full h-px bg-primary/10 my-4"></div>
+            <span className="px-4 text-xs font-black text-primary/30 uppercase tracking-widest mb-2 block">Management</span>
+            <NavLink to="/dashboard/rooms" className={getNavLinkClass} onClick={onClose}>
+              <span className="material-symbols-outlined">bed</span>
+              <span className="font-body">Manage Rooms</span>
+            </NavLink>
+            <NavLink to="/dashboard/staff" className={getNavLinkClass} onClick={onClose}>
+              <span className="material-symbols-outlined">badge</span>
+              <span className="font-body">Manage Staff</span>
+            </NavLink>
+          </>
         )}
       </div>
 
       {/* ACTION BUTTONS */}
-      <div className="mt-auto flex flex-col gap-3">
+      <div className="mt-6 flex flex-col gap-3 pt-6 border-t border-primary/10">
         {/* Only Admins and Receptionists should be able to book rooms */}
         {(userRole === 'Admin' || userRole === 'Receptionist') && (
           <button 
-            onClick={() => navigate('/dashboard/new-booking')} 
+            onClick={() => { navigate('/dashboard/new-booking'); onClose(); }} 
             className="bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20"
           >
             <span className="material-symbols-outlined">add_circle</span>
