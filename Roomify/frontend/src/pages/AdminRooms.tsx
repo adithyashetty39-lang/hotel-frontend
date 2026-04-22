@@ -88,7 +88,7 @@ export const AdminRooms: React.FC = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/rooms/${id}', {
+      const response = await fetch(`https://hotel-management-system-1-ejha.onrender.com/api/rooms/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
