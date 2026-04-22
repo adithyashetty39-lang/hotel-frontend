@@ -15,7 +15,7 @@ export const AdminRooms: React.FC = () => {
   const fetchRooms = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://hotel-management-system-1-ejha.onrender.com/api/rooms', {
+      const response = await fetch(`https://hotel-management-system-1-ejha.onrender.com/api/rooms`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -59,8 +59,8 @@ export const AdminRooms: React.FC = () => {
 
       // If we are editing, hit the PUT route. If it's a new room, hit POST.
       const url = editingRoom 
-        ? 'https://hotel-management-system-1-ejha.onrender.com/api/rooms/${editingRoom.room_id}'
-        : 'https://hotel-management-system-1-ejha.onrender.com/api/rooms';
+        ? `https://hotel-management-system-1-ejha.onrender.com/api/rooms/${editingRoom.room_id}`
+        : `https://hotel-management-system-1-ejha.onrender.com/api/rooms`;
         
       const method = editingRoom ? 'PUT' : 'POST';
 
